@@ -1,6 +1,5 @@
-package com.sujit.petservice.model;
+package com.sujit.userservice.model;
 
-import com.sujit.petservice.constraints.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -18,21 +16,24 @@ import java.time.LocalDate;
 @NoArgsConstructor
 
 @Entity
-public class Orders {
+public class User {
 
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private Long id;
+    private Integer id;
 
-    private Long petId;
+    private String username;
 
-    private Integer quantity;
+    private String firstName;
 
-    private String shipDate;
+    private String lastName;
 
-    private OrderStatus status;
+    private String email;
 
-    private boolean complete = false;
+    private String password;
 
+    private String phone;
+
+    private Integer userStatus;
 
 }
