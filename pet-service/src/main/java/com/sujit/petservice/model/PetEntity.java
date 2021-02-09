@@ -10,6 +10,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
+@Entity
 public class PetEntity {
 
     @Id
@@ -21,8 +22,10 @@ public class PetEntity {
 
     private String name;
 
+    @ElementCollection
     private Set<String> photoUrls;
 
+    @OneToMany
     private Set<TagEntity> tags;
 
     @Enumerated(EnumType.STRING)
