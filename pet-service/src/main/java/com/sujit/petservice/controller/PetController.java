@@ -1,12 +1,10 @@
 package com.sujit.petservice.controller;
 
-import com.sujit.petservice.model.CategoryEntity;
-import com.sujit.petservice.model.PetEntity;
-import com.sujit.petservice.model.PetStatus;
-import com.sujit.petservice.model.TagEntity;
+import com.sujit.petservice.model.*;
 import com.sujit.petservice.repository.CategoryRepository;
 import com.sujit.petservice.repository.PetEntityRepository;
 import com.sujit.petservice.repository.TagRepository;
+import com.sujit.petservice.validator.CategoryValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +30,14 @@ public class PetController {
     private final PetEntityRepository repository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final CategoryValidator categoryValidator;
 
     @PostMapping
-    public ResponseEntity<PetEntity> create(@RequestBody PetEntity entity) {
+    public ResponseEntity<Object> create(@RequestBody PetEntity entity) {
+        Set<AppError> errors = categoryValidator.validate(entity.getCategory());
+        if( !errors.isEmpty()){
+           return ResponseEntity.badRequest().body(errors);
+        }
         log.info("Creating new pet {}", entity);
         entity.setCategory(categoryRepository.save(updateIfRequired(entity.getCategory())));
         Set<TagEntity> tagEntities = entity.getTags().stream().map(this::updateIfRequired).collect(Collectors.toSet());
