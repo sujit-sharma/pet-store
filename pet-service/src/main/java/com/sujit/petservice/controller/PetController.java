@@ -14,6 +14,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,7 +103,41 @@ public class PetController {
         log.info("Successfully Deleted ");
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/image{petId}/uploadImage")
+    public ResponseEntity uploadImage(@PathVariable Long petId, @RequestParam("image")MultipartFile multipartFile) {
+        log.info("Uploading pet image");
+        Optional<PetEntity> exist = repository.findById(petId);
+        if(exist.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        PetEntity pet = exist.get();
+        String imageName = StringUtils.cleanPath(multipartFile.getOriginalFilename()) + new Date().toString();
+        Set<String> imagesUrls = pet.getPhotoUrls();
+        imagesUrls.add(imageName);
+        pet.setPhotoUrls(imagesUrls);
+        String uploadDir  = "pet-image" + pet.getId();
+        fileSave(uploadDir, imageName, multipartFile);
+        log.info("File uploaded successfully");
+        return ResponseEntity.ok().build();
+    }
 
+    private void fileSave(String uploadDir, String imageName, MultipartFile multipartFile) {
+        log.info("Saving image");
+        Path uploadPath = Paths.get(uploadDir);
+        try {
+            if(!Files.exists(uploadPath));{
+                Files.createDirectories(uploadPath);
+            }
+            InputStream inputStream = multipartFile.getInputStream();
+            Path filePath = uploadPath.resolve(imageName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            inputStream.close();
+
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+    }
 
     private CategoryEntity updateIfRequired(CategoryEntity request) {
         String name = StringUtils.capitalize(request.getName());
