@@ -2,6 +2,7 @@ package com.sujit.petservice.controller;
 
 import com.sujit.petservice.model.CategoryEntity;
 import com.sujit.petservice.model.PetEntity;
+import com.sujit.petservice.model.PetStatus;
 import com.sujit.petservice.model.TagEntity;
 import com.sujit.petservice.repository.CategoryRepository;
 import com.sujit.petservice.repository.PetEntityRepository;
@@ -9,18 +10,16 @@ import com.sujit.petservice.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@Controller
-@Component
 @RequestMapping("/api/pet")
 public class PetController {
 
@@ -31,31 +30,97 @@ public class PetController {
     @PostMapping
     public ResponseEntity<PetEntity> create(@RequestBody PetEntity entity) {
         log.info("Creating new pet {}", entity);
-        CategoryEntity category = entity.getCategory();
-        category.setName(StringUtils.capitalize(category.getName()));
-        CategoryEntity categoryEntity = categoryRepository.findByName(category.getName()).orElseGet(() -> categoryRepository.save(category));
-
-        Set<TagEntity> tagSet = entity.getTags();
-
-        tagSet.stream().forEach(tag -> {tag.setName(StringUtils.capitalize(tag.getName()));
-            tagRepository.findByName(tag.getName()).orElseGet(() -> tagRepository.save(tag));
-
-
-        });
-        entity.setCategory(categoryEntity);
+        entity.setCategory(categoryRepository.save(updateIfRequired(entity.getCategory())));
+        Set<TagEntity> tagEntities = entity.getTags().stream().map(this::updateIfRequired).collect(Collectors.toSet());
+        entity.setTags(new HashSet<>(tagRepository.saveAll(tagEntities)));
+        log.info("Pet created successfully");
         return ResponseEntity.ok(repository.save(entity));
     }
+
     @GetMapping
     public ResponseEntity<?> viewall() {
         log.info("view aLL METHOD called");
         return ResponseEntity.ok(repository.findAll());
     }
 
-    @PutMapping
-    public ResponseEntity<PetEntity> update(@RequestBody PetEntity entity, @PathVariable Long petId) {
-        log.info("Updating Existing  pet {}", entity);
-        return ResponseEntity.ok(repository.save(entity));
+    @PutMapping("/{petId}")
+    public ResponseEntity<PetEntity> update(@RequestBody PetEntity updateEntity, @PathVariable Long petId) {
+        log.info("Updating Existing  pet {}", updateEntity);
+        Optional<PetEntity> exist = repository.findById(petId);
+        if (exist.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        PetEntity pet = exist.get();
+        pet.setCategory(categoryRepository.save(updateIfRequired(updateEntity.getCategory())));
+        pet.setName(updateEntity.getName());
+        pet.setPhotoUrls(updateEntity.getPhotoUrls());
+        Set<TagEntity> tagEntities = updateEntity.getTags().stream().map(this::updateIfRequired).collect(Collectors.toSet());
+        pet.setTags(new HashSet<>(tagRepository.saveAll(tagEntities)));
+        pet.setStatus(updateEntity.getStatus());
+        log.info("Pet updated successfully");
+        return ResponseEntity.ok(repository.save(pet));
+
     }
 
+    @GetMapping("/{petId}")
+    public ResponseEntity<PetEntity> findById(@PathVariable Long petId) {
+        log.info("Retrieving pet with given id");
+        Optional<PetEntity> exist = repository.findById(petId);
+        if(exist.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok( exist.get());
+
+    }
+    @GetMapping("/findByStatus")
+    public ResponseEntity<List<PetEntity>> findByStatus(@RequestBody PetStatus[] status) {
+        log.info("Finding pet by Id");
+        List<PetEntity> petEntityList = new ArrayList<>();
+        Arrays.stream(status).sequential().forEach(val -> petEntityList.addAll(repository.findByStatus(val).get()));
+        log.info("Successfully retrieved pet by status");
+        return ResponseEntity.ok(petEntityList);
+    }
+
+    @PostMapping("/{petId}")
+    public ResponseEntity<PetEntity> updateformData(@RequestBody PetEntity petEntity){
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/{petId}")
+    public ResponseEntity deletePet(@PathVariable Long petId) {
+        log.info("Deleting pet {} ", petId);
+        Optional<PetEntity> exist = repository.findById(petId);
+        if (exist.isEmpty()) {
+            log.info("Pet id does not exist");
+            return ResponseEntity.notFound().build();
+        }
+        repository.deleteById(petId);
+        log.info("Successfully Deleted ");
+        return ResponseEntity.ok().build();
+    }
+
+
+    private CategoryEntity updateIfRequired(CategoryEntity request) {
+        String name = StringUtils.capitalize(request.getName());
+        return categoryRepository.findByName(name)
+                .map(entity -> {
+                    entity.setName(name);
+                    return entity;
+                }).orElseGet(() -> {
+                    request.setName(name);
+                    return request;
+                });
+    }
+
+    private TagEntity updateIfRequired(TagEntity request) {
+        String name = StringUtils.capitalize(request.getName());
+        return tagRepository.findByName(name)
+                .map(entity -> {
+                    entity.setName(name);
+                    return entity;
+                }).orElseGet(() -> {
+                    request.setName(name);
+                    return request;
+                });
+    }
 
 }

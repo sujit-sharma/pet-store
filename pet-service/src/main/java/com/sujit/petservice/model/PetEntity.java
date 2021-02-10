@@ -1,18 +1,18 @@
 package com.sujit.petservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
 @Entity
-public class PetEntity {
+public class PetEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class PetEntity {
     @ElementCollection
     private Set<String> photoUrls;
 
-    @OneToMany
+    @ManyToMany
     private Set<TagEntity> tags;
 
     @Enumerated(EnumType.STRING)
