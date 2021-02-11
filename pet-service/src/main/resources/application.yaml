@@ -7,3 +7,6 @@ spring:
       ddl-auto: create-drop
 
 debug: true
+
+upload:
+  dir: /home/sujit/clusus/projects/pet-store
