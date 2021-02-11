@@ -1,10 +1,12 @@
 package com.sujit.userservice.controller;
 
 import com.sujit.userservice.LoginDto;
+import com.sujit.userservice.LoginResponse;
 import com.sujit.userservice.model.User;
 import com.sujit.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +36,9 @@ public class UserController {
         return ResponseEntity.ok(repository.saveAll(userIterable));
     }
     @PostMapping("/user/createWithList")
-    public ResponseEntity<List<User>> createAllWithList(@RequestBody User[] users) {
+    public ResponseEntity<List<User>> createAllWithList(@RequestBody List<User> users) {
         log.info("Creating many user with list");
-        Iterable<User> userIterable = Arrays.asList(users);
-        return ResponseEntity.ok(repository.saveAll(userIterable));
+        return ResponseEntity.ok(repository.saveAll(users));
     }
     @GetMapping("user/login")
     public ResponseEntity<Object> login(@RequestParam String username, @RequestParam String password) {
@@ -45,25 +46,67 @@ public class UserController {
         loginDto.setUsername(username);
         loginDto.setPassword(password);
         User user = repository.findByUsername(loginDto.getUsername()).orElse(null);
-        if(user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        if(user.getPassword().equals(loginDto.getPassword())) {
+        LoginResponse response = new LoginResponse();
+
+        if(user != null && user.getPassword().equals(loginDto.getPassword())) {
             log.info("Login Success");
-            user.setUserStatus(1);
-            return ResponseEntity.ok().build();
+            response.setMessage("Login Success");
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.badRequest().body("Invalid username or password");
+
+        response.setMessage("Invalid Username or password");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
     @GetMapping("/user/logout")
     public ResponseEntity<Object> logout(){
         log.info("processing logout");
-        List<User> loginUsers =repository.findAllByUserStatus(1);
-        loginUsers.stream().forEach(user -> user.setUserStatus(0));
-
-        repository.saveAll(loginUsers);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/user/{username}")
+    public ResponseEntity<User> findByUserName(@PathVariable String username) {
+        log.info("Finding user by username");
+        Optional<User> exist = repository.findByUsername(username);
+        if(exist.isEmpty()) {
+            log.info("User does not exist");
+            return ResponseEntity.notFound().build();
+        }
+        log.info("Successfully retrieved user");
+        return ResponseEntity.ok(exist.get());
+    }
+    @PutMapping("/user/{username}")
+    public ResponseEntity<User> update(@PathVariable String username, @RequestBody User user) {
+        log.info("Updating Existing User {} ", user);
+        Optional<User> exist  = repository.findByUsername(username);
+        if(exist.isEmpty()) {
+            log.info("Cannot Update User does not exist");
+            return ResponseEntity.notFound().build();
+        }
+        User userForUpdate = exist.get();
+        userForUpdate.setId(user.getId());
+        userForUpdate.setUsername(user.getUsername());
+        userForUpdate.setFirstName(user.getFirstName());
+        userForUpdate.setLastName(user.getLastName());
+        userForUpdate.setEmail(user.getEmail());
+        userForUpdate.setPassword(user.getPassword());
+        userForUpdate.setPhone(user.getPhone());
+        log.info("Update user success");
+        return ResponseEntity.ok(repository.save(userForUpdate));
+    }
+    @DeleteMapping("/user/{username}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String username) {
+        log.info("Deleting user {} ", username);
+        Optional<User> exist= repository.findByUsername(username);
+        if(exist.isEmpty()) {
+            log.info("User does not exist");
+            return ResponseEntity.notFound().build();
+        }
+        repository.deleteById(exist.get().getId());
+        log.info("Deleted successfully");
+        return ResponseEntity.ok().build();
+    }
+
+
+
 }
 
 
