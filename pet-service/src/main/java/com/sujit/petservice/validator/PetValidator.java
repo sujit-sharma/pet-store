@@ -1,8 +1,8 @@
 package com.sujit.petservice.validator;
 
 import com.sujit.petservice.model.AppError;
-import com.sujit.petservice.model.CategoryEntity;
 import com.sujit.petservice.model.PetEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 

@@ -5,10 +5,12 @@ import com.sujit.petservice.model.PetEntity;
 import com.sujit.petservice.validator.PetValidator;
 import com.sujit.petservice.validator.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import javax.validation.Validator;
 import java.util.Set;
 
+@Component
 @RequiredArgsConstructor
 public class PetValidatorImpl implements PetValidator {
     private final Validator validator;

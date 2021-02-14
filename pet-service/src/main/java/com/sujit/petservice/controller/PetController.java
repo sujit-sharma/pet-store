@@ -5,6 +5,8 @@ import com.sujit.petservice.repository.CategoryRepository;
 import com.sujit.petservice.repository.PetEntityRepository;
 import com.sujit.petservice.repository.TagRepository;
 import com.sujit.petservice.validator.CategoryValidator;
+import com.sujit.petservice.validator.PetValidator;
+import com.sujit.petservice.validator.TagValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,7 @@ public class PetController {
     private final PetEntityRepository repository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final PetValidator petValidator;
     private final CategoryValidator categoryValidator;
 
     @Value("${upload.dir}")
@@ -40,7 +43,8 @@ public class PetController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody PetEntity entity) {
-        Set<AppError> errors = categoryValidator.validate(entity.getCategory());
+        Set<AppError> errors = petValidator.validate(entity);
+        errors.addAll(categoryValidator.validate(entity.getCategory()));
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
