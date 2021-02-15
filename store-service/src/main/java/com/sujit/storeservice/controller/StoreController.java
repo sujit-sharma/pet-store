@@ -5,7 +5,6 @@ import com.sujit.storeservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class StoreController {
 
     @GetMapping("/order/{orderId}")
     public ResponseEntity<OrderEntity> findByOrderId(@PathVariable Long orderId) {
-        log.info("Searching order if exist");
+         log.info("Searching order if exist");
         Optional<OrderEntity> exist  =  repository.findById(orderId);
         if(exist.isEmpty()) {
             log.info("Provided order id does not exist");

@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 public enum Authorities {
 
-    ROLE_ADMIN,
-    ROLE_PET_USER,
-    ROLE_STORE_USER,
-    ROLE_ORDER_USER;
+    ADMIN,
+    PET_USER,
+    STORE_USER,
+    ORDER_USER;
 
     public static void validate(Set<String> authorities) {
         Set<String> allowedAuthorities = Arrays.stream(Authorities.values()).map(Enum::name).collect(Collectors.toSet());

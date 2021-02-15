@@ -1,4 +1,4 @@
-package com.sujit.storeservice.security;
+package com.sujit.petservice.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter implements Filter {
     private static final String HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String JWT_SECRET_KEY = "MySecret@#$%K%y";
@@ -51,7 +50,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     .getBody();
 
             String username = claims.getSubject();
-            log.info("Username from JWT tkoen is " + username);
+            log.info("Username from JWT token is " + username);
 
             if (username != null) {
                 log.info("User exist and retrieved ");
