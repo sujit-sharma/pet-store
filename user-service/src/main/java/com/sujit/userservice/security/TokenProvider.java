@@ -29,9 +29,9 @@ public class TokenProvider {
         User user = (User) authentication.getPrincipal();
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("authorities", new HashSet<>(user.getAuthorities()));
-        return Jwts.builder()
+        return "Bearer " + Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis() + 2000L))
+                .setExpiration(new Date(System.currentTimeMillis() + 1572000L))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
 
