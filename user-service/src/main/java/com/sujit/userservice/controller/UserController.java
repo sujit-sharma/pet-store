@@ -79,8 +79,7 @@ public class UserController {
         }
         log.info("All users validated successfully");
 
-        Arrays.stream(users).forEach(user -> user.setPassword(passwordEncoder.encode(user.getPassword())));
-        log.info("Password Encoded successfully");
+        log.info("Password Encoded successfully encoded password" );
         log.info("Creating Many User");
         Iterable<UserEntity> userIterable = Arrays.asList(users);
 
@@ -108,7 +107,7 @@ public class UserController {
         LoginDto loginDto = new LoginDto();
         loginDto.setUsername(username);
         loginDto.setPassword(password);
-        log.info("Signing  in user {} ", loginDto);
+        log.info("Signing  in user {} ", loginDto.getUsername());
 
         final LoginResponse response = new LoginResponse();
 

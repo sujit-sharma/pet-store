@@ -27,7 +27,7 @@ public class AuthorizationConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                .antMatchers("/api/pet/**").hasAnyAuthority("ADMIN", "STORE_USER")
+                .antMatchers("/api/pet/**").hasAnyAuthority("ADMIN", "PET_USER")
                 .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated();
 
