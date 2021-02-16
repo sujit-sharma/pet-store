@@ -49,7 +49,6 @@ public class UserController {
         if(exists != null) {
             log.info("User with given username already exists");
             return ResponseEntity.status(HttpStatus.FOUND).body(new AppError("username", "User with given username already exists"));
-
         }
         log.info("Validation success");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -69,7 +68,7 @@ public class UserController {
             UserEntity usr = repository.findByUsername(user.getUsername()).orElse(null);
             if(usr != null){
                 log.info("User with given username already exists");
-                errors.add(new AppError("username", "User with given username already exists"));
+                errors.add(new AppError("username " + usr.getUsername(), "User with given username already exists"));
 
             }
         });
