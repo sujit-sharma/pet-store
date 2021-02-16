@@ -2,15 +2,16 @@ package com.sujit.userservice.controller;
 
 import com.sujit.userservice.LoginDto;
 import com.sujit.userservice.LoginResponse;
+import com.sujit.userservice.model.AppError;
 import com.sujit.userservice.model.Authorities;
 import com.sujit.userservice.model.UserEntity;
 import com.sujit.userservice.repository.UserRepository;
 import com.sujit.userservice.security.TokenProvider;
+import com.sujit.userservice.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -32,19 +34,54 @@ public class UserController {
     private final AuthenticationManagerBuilder authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final UserValidator validator;
 
     @PostMapping("/user")
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user) {
-        log.info("Creating User");
+    public ResponseEntity<Object> createUser(@RequestBody UserEntity user) {
+        log.info("Validating  User");
         Authorities.validate(user.getAuthorities());
+        List<AppError> errors = validator.validate(user);
+        if (!errors.isEmpty()) {
+            log.info("Validation failed");
+            return ResponseEntity.badRequest().body(errors);
+        }
+        UserEntity exists  = repository.findByUsername(user.getUsername()).orElse(null);
+        if(exists != null) {
+            log.info("User with given username already exists");
+            return ResponseEntity.status(HttpStatus.FOUND).body(new AppError("username", "User with given username already exists"));
+
+        }
+        log.info("Validation success");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        log.info("Password encoded");
         UserEntity created = repository.save(user);
         log.info("User Created Successfully");
         return ResponseEntity.ok(created);
     }
 
     @PostMapping("/user/createWithArray")
-    public ResponseEntity<List<UserEntity>> createAll(@RequestBody UserEntity[] users) {
+    public ResponseEntity<Object> createAll(@RequestBody UserEntity[] users) {
+        log.info("Validating all users");
+        Arrays.stream(users).forEach(user -> Authorities.validate(user.getAuthorities()));
+        List<AppError> errors = Arrays.stream(users).map(validator::validate).flatMap(List::stream).collect(Collectors.toList());
+
+        Arrays.stream(users).forEach(user -> {
+            UserEntity usr = repository.findByUsername(user.getUsername()).orElse(null);
+            if(usr != null){
+                log.info("User with given username already exists");
+                errors.add(new AppError("username", "User with given username already exists"));
+
+            }
+        });
+        if(!errors.isEmpty()) {
+            log.info("Multiple users validation failed");
+            return ResponseEntity.badRequest().body(errors);
+
+        }
+        log.info("All users validated successfully");
+
+        Arrays.stream(users).forEach(user -> user.setPassword(passwordEncoder.encode(user.getPassword())));
+        log.info("Password Encoded successfully");
         log.info("Creating Many User");
         Iterable<UserEntity> userIterable = Arrays.asList(users);
 
