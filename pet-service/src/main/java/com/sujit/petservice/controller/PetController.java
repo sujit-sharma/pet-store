@@ -1,18 +1,13 @@
 package com.sujit.petservice.controller;
 
 import com.sujit.petservice.model.*;
-import com.sujit.petservice.repository.CategoryRepository;
 import com.sujit.petservice.repository.PetEntityRepository;
-import com.sujit.petservice.repository.TagRepository;
-import com.sujit.petservice.validator.CategoryValidator;
-import com.sujit.petservice.validator.PetValidator;
-import com.sujit.petservice.validator.TagValidator;
+import com.sujit.petservice.service.PetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,62 +29,32 @@ import java.util.stream.Collectors;
 public class PetController {
 
     private final PetEntityRepository repository;
-    private final CategoryRepository categoryRepository;
-    private final TagRepository tagRepository;
-    private final PetValidator petValidator;
-    private final CategoryValidator categoryValidator;
+    private final PetService petService;
 
     @Value("${upload.dir}")
     private String uploadDir;
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody PetEntity entity) {
-        Set<AppError> errors = petValidator.validate(entity);
-        errors.addAll(categoryValidator.validate(entity.getCategory()));
-        if (!errors.isEmpty()) {
-            return ResponseEntity.badRequest().body(errors);
-        }
-        log.info("Creating new pet {}", entity);
-        entity.setCategory(categoryRepository.save(updateIfRequired(entity.getCategory())));
-        Set<TagEntity> tagEntities = entity.getTags().stream().map(this::updateIfRequired).collect(Collectors.toSet());
-        entity.setTags(new HashSet<>(tagRepository.saveAll(tagEntities)));
-        log.info("Pet created successfully");
-        return ResponseEntity.ok(repository.save(entity));
+        return ResponseEntity.ok(petService.create(entity));
     }
 
     @GetMapping
     public ResponseEntity<?> viewall() {
-        log.info("view aLL METHOD called");
-        return ResponseEntity.ok(repository.findAll());
+        log.info("view aLL method called");
+        return ResponseEntity.ok(petService.viewAll());
     }
 
     @PutMapping("/{petId}")
     public ResponseEntity<PetEntity> update(@RequestBody PetEntity updateEntity, @PathVariable Long petId) {
         log.info("Updating Existing  pet {}", updateEntity);
-        Optional<PetEntity> exist = repository.findById(petId);
-        if (exist.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        PetEntity pet = exist.get();
-        pet.setCategory(categoryRepository.save(updateIfRequired(updateEntity.getCategory())));
-        pet.setName(updateEntity.getName());
-        pet.setPhotoUrls(updateEntity.getPhotoUrls());
-        Set<TagEntity> tagEntities = updateEntity.getTags().stream().map(this::updateIfRequired).collect(Collectors.toSet());
-        pet.setTags(new HashSet<>(tagRepository.saveAll(tagEntities)));
-        pet.setStatus(updateEntity.getStatus());
-        log.info("Pet updated successfully");
-        return ResponseEntity.ok(repository.save(pet));
-
+        return ResponseEntity.ok(petService.update(petId, updateEntity));
     }
 
     @GetMapping("/{petId}")
     public ResponseEntity<PetEntity> findById(@PathVariable Long petId) {
         log.info("Retrieving pet with given id");
-        Optional<PetEntity> exist = repository.findById(petId);
-        if (exist.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(exist.get());
+        return ResponseEntity.ok(repository.findById(petId).orElseThrow(EntityNotFound::new));
 
     }
 
@@ -104,21 +69,10 @@ public class PetController {
         return ResponseEntity.ok(all);
     }
 
-    @PostMapping("/{petId}")
-    public ResponseEntity<PetEntity> updateformData(@RequestBody PetEntity petEntity) {
-        return ResponseEntity.ok().build();
-    }
-
     @DeleteMapping("/{petId}")
     public ResponseEntity<Object> deletePet(@PathVariable Long petId) {
         log.info("Deleting pet {} ", petId);
-        Optional<PetEntity> exist = repository.findById(petId);
-        if (exist.isEmpty()) {
-            log.info("Pet id does not exist");
-            return ResponseEntity.notFound().build();
-        }
-        repository.deleteById(petId);
-        log.info("Successfully Deleted ");
+        petService.deleteById(petId);
         return ResponseEntity.ok().build();
     }
 
@@ -157,28 +111,5 @@ public class PetController {
         }
     }
 
-    private CategoryEntity updateIfRequired(CategoryEntity request) {
-        String name = StringUtils.capitalize(request.getName());
-        return categoryRepository.findByName(name)
-                .map(entity -> {
-                    entity.setName(name);
-                    return entity;
-                }).orElseGet(() -> {
-                    request.setName(name);
-                    return request;
-                });
-    }
-
-    private TagEntity updateIfRequired(TagEntity request) {
-        String name = StringUtils.capitalize(request.getName());
-        return tagRepository.findByName(name)
-                .map(entity -> {
-                    entity.setName(name);
-                    return entity;
-                }).orElseGet(() -> {
-                    request.setName(name);
-                    return request;
-                });
-    }
 
 }

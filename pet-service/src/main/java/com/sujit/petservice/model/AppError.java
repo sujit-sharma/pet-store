@@ -21,4 +21,9 @@ public class AppError {
     public static <T> Set<AppError> create(Set<ConstraintViolation<T>> violations) {
         return violations.stream().map(e -> new AppError(e.getPropertyPath().toString(),e.getMessage())).collect(Collectors.toSet());
     }
+
+    public static void raiseAllIfNecessary(Set<AppError> errors) {
+        if (errors.isEmpty()) return;
+        throw new ViolationException(errors);
+    }
 }
