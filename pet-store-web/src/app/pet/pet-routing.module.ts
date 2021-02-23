@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {PetMainComponent} from "./pet-main/pet-main.component";
 import {PetCreateComponent} from "./pet-create/pet-create.component";
+import {PetListComponent} from "./pet-list/pet-list.component";
 
 const routes: Routes = [
   {
@@ -12,7 +13,10 @@ const routes: Routes = [
         path: 'create',
         component: PetCreateComponent
       },
-
+      {
+        path: 'list',
+        component: PetListComponent
+      },
       {
         path: '**',
         pathMatch: 'full',

@@ -4,28 +4,50 @@ import {DashboardComponent} from "./dashboard/dashboard.component";
 import {OrderModule} from "./order/order.module";
 import {UserModule} from "./user/user.module";
 import {PetModule} from "./pet/pet.module";
+import {PageWrapperComponent} from "./page-wrapper/page-wrapper.component";
+import {SignupComponent} from "./signup/signup.component";
+import {SigninComponent} from "./signin/signin.component";
 
 const routes: Routes = [
   {
-    path: 'dashboard',
-    component: DashboardComponent
+    path: 'pages',
+    component: PageWrapperComponent,
+    children: [
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+      {
+        path: 'order',
+        loadChildren: () => OrderModule
+      },
+      {
+        path: 'pet',
+        loadChildren: () => PetModule
+      },
+      {
+        path: 'user',
+        loadChildren: () => UserModule
+      },
+      {
+        path: "**",
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
+      }
+    ]
   },
   {
-    path: 'order',
-    loadChildren: () => OrderModule
+    path: 'signup',
+    component: SignupComponent
   },
   {
-    path: 'pet',
-    loadChildren: () => PetModule
-  },
-  {
-    path: 'user',
-    loadChildren: () => UserModule
+    path: 'signin',
+    component: SigninComponent
   },
   {
     path: "**",
     pathMatch: 'full',
-    redirectTo: 'dashboard'
+    redirectTo: 'signin'
   }
 ];
 

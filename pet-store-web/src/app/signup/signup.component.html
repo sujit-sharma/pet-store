@@ -1,0 +1,48 @@
+<div class="container">
+  <form [formGroup]="form" (ngSubmit)="submitForm($event)">
+    <h2 class="text-center mb-3 mt-4">Pet Store | Create User</h2>
+
+    <div class="row jumbotron">
+      <div class="col-sm-6 form-group">
+        <label for="name-f">First Name</label>
+        <input type="text" class="form-control" formControlName="firstName" name="fname" id="name-f" placeholder="Enter your first name." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="name-l">Last name</label>
+        <input type="text" class="form-control" formControlName="lastName" name="lname" id="name-l" placeholder="Enter your last name." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" formControlName="email" name="email" id="email" placeholder="Enter your email." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="tel">Phone</label>
+        <input type="tel" name="phone" class="form-control" formControlName="phone" id="tel" placeholder="Enter Your Contact Number." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="uname">User name</label>
+        <input type="text" class="form-control" name="uname" formControlName="username" id="uname" placeholder="Enter your user name." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="authorities">Authorities</label>
+        <input type="text" class="form-control" name="authorities" formControlName="authorities" id="authorities" placeholder="Enter your authorities." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="pass">Password</label>
+        <input type="Password" name="password" class="form-control" formControlName="password" id="pass" placeholder="Enter your password." required>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="pass2">Confirm Password</label>
+        <input type="Password" name="cnf-password" class="form-control" formControlName="confirmPassword" id="pass2" placeholder="Re-enter your password." required>
+      </div>
+
+      <div class="col-sm-12 form-group mb-0">
+
+        <button class="btn btn-outline-dark float-left" routerLink="/signin">Login</button>
+
+        <button class="btn btn-primary float-right" type="submit">Submit</button>
+      </div>
+
+    </div>
+  </form>
+</div>

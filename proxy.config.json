@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/api/user",
+    "target": "http://localhost:8082"
+  },
+  {
+    "path": "/api/pet",
+    "target": "http://localhost:8080"
+  },
+  {
+    "path": "/api/store",
+    "target": "http://localhost:8081"
+  }
+]

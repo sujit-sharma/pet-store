@@ -1,0 +1,93 @@
+<div class="page-wrapper chiller-theme toggled">
+  <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    <i class="fas fa-bars"></i>
+  </a>
+  <nav id="sidebar" class="sidebar-wrapper">
+    <div class="sidebar-content">
+      <div class="sidebar-brand">
+        <a href="#">Pet Store</a>
+        <div id="close-sidebar">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="sidebar-header">
+        <div class="user-pic">
+          <img class="img-responsive img-rounded" src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg" alt="User picture">
+        </div>
+        <div class="user-info">
+          <span class="user-name">Jhon
+            <strong>Smith</strong>
+          </span>
+          <span class="user-role">Administrator</span>
+          <span class="user-status">
+            <i class="fa fa-circle"></i>
+            <span>Online</span>
+          </span>
+        </div>
+      </div>
+      <!-- sidebar-search  -->
+      <div class="sidebar-menu">
+        <ul>
+          <li class="header-menu">
+            <span>General</span>
+          </li>
+          <li class="sidebar-dropdown">
+            <a routerLink="dashboard">
+              <i class="fa fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="sidebar-dropdown">
+            <a routerLink="user">
+              <i class="fa fa-shopping-cart"></i>
+              <span>Users</span>
+            </a>
+          </li>
+          <li class="sidebar-dropdown">
+            <a routerLink="pet">
+              <i class="far fa-gem"></i>
+              <span>Pets</span>
+            </a>
+          </li>
+          <li class="sidebar-dropdown">
+            <a routerLink="order">
+              <i class="fa fa-chart-line"></i>
+              <span>Orders</span>
+            </a>
+          </li>
+          <li class="header-menu">
+            <span>Extra</span>
+          </li>
+          <li>
+            <a routerLink="/signin">
+              <i class="fa fa-book"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- sidebar-menu  -->
+    </div>
+  </nav>
+  <!-- sidebar-wrapper  -->
+  <main class="page-content">
+    <div class="container">
+
+      <router-outlet></router-outlet>
+
+      <footer class="text-center">
+        <div class="mb-2">
+          <small>
+            © 2020 made with <fa-icon [icon]="faHeart"></fa-icon> by - <a target="_blank" rel="noopener noreferrer" href="https://gitlab.com/ps.sujit.sharma">
+            Sujit Sharma
+          </a>
+          </small>
+        </div>
+      </footer>
+
+    </div>
+
+  </main>
+  <!-- page-content" -->
+</div>
+<!-- page-wrapper -->
