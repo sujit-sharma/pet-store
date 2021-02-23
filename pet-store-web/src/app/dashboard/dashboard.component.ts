@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Login } from "../login";
 
 @Component({
   selector: 'app-dashboard',
@@ -8,6 +9,10 @@ import { Component, OnInit } from '@angular/core';
 export class DashboardComponent implements OnInit {
 
   constructor() { }
+
+  submitted = false;
+
+  onSubmit() { this.submitted = true; }
 
   ngOnInit(): void {
   }
