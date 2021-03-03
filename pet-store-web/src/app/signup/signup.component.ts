@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../services/user.service";
 import {UserEntity} from "../services/entities";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-signup',
@@ -13,7 +14,8 @@ export class SignupComponent implements OnInit {
   form: FormGroup;
 
   constructor(private fb: FormBuilder,
-              private userService: UserService) { }
+              private userService: UserService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -38,12 +40,15 @@ export class SignupComponent implements OnInit {
           lastName: value.lastName,
           password: value.password,
           username: value.username,
+          email: value.email,
           phone: value.phone,
           authorities: value.authorities.split('|')
         }).toPromise();
 
       alert(`User created with id: ${entity.id}`)
 
+      this.router.navigate(['/signin']).then();
+      
     } else {
       alert("Your submitted form has invalid values.")
     }

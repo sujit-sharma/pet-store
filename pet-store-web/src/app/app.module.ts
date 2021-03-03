@@ -11,6 +11,7 @@ import { PageWrapperComponent } from './page-wrapper/page-wrapper.component';
 import { SignupComponent } from './signup/signup.component';
 import { SigninComponent } from './signin/signin.component';
 import {HttpClientModule} from "@angular/common/http";
+import { LogoutComponent } from './logout/logout.component';
 
 
 @NgModule({
@@ -19,7 +20,9 @@ import {HttpClientModule} from "@angular/common/http";
     DashboardComponent,
     PageWrapperComponent,
     SignupComponent,
-    SigninComponent
+    SigninComponent,
+    LogoutComponent,
+
   ],
   imports: [
     BrowserModule,

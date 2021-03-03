@@ -15,4 +15,9 @@ export class UserService {
     return this.http.post<UserEntity>(`${environment.baseURL}/api/user`, entity)
   }
 
+   login(value: any) {
+    return this.http.get<any>(`${environment.baseURL}/api/user/login?username=${value.username}&password=${value.password}`)
+  }
+
+
 }

@@ -15,10 +15,10 @@
           <img class="img-responsive img-rounded" src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg" alt="User picture">
         </div>
         <div class="user-info">
-          <span class="user-name">Jhon
-            <strong>Smith</strong>
+          <span class="user-name">
+            <strong>{{jwtDecode().sub}}</strong>
           </span>
-          <span class="user-role">Administrator</span>
+          <span class="user-role">{{jwtDecode().authorities}}</span>
           <span class="user-status">
             <i class="fa fa-circle"></i>
             <span>Online</span>
@@ -49,7 +49,7 @@
               <span>Pets</span>
             </a>
           </li>
-          <li class="sidebar-dropdown">
+          <li class="sidebar-dropdown">.
             <a routerLink="order">
               <i class="fa fa-chart-line"></i>
               <span>Orders</span>
@@ -59,9 +59,9 @@
             <span>Extra</span>
           </li>
           <li>
-            <a routerLink="/signin">
+            <a routerLink="/signup" >
               <i class="fa fa-book"></i>
-              <span>Logout</span>
+              <span (click)="logoutUser()">Logout</span>
             </a>
           </li>
         </ul>

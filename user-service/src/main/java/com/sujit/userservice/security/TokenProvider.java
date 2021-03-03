@@ -31,7 +31,7 @@ public class TokenProvider {
         claims.put("authorities", new HashSet<>(user.getAuthorities()));
         return "Bearer " + Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis() + 1572000L))
+                .setExpiration(new Date(System.currentTimeMillis() + 2351572000L))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
 

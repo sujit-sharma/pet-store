@@ -7,11 +7,13 @@ import {PetModule} from "./pet/pet.module";
 import {PageWrapperComponent} from "./page-wrapper/page-wrapper.component";
 import {SignupComponent} from "./signup/signup.component";
 import {SigninComponent} from "./signin/signin.component";
+import {AuthGuard} from "./services/auth.guard";
 
 const routes: Routes = [
   {
     path: 'pages',
     component: PageWrapperComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'dashboard',
