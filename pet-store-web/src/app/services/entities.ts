@@ -12,6 +12,7 @@ export interface UserEntity {
 
 export interface PetEntity {
   id?: number,
+  name: string,
   category: CategoryEntity,
   photoUrls: Set<string>,
   tags: Set<TagEntity>,
