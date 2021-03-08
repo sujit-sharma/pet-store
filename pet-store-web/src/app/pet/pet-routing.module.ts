@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {PetMainComponent} from "./pet-main/pet-main.component";
 import {PetCreateComponent} from "./pet-create/pet-create.component";
 import {PetListComponent} from "./pet-list/pet-list.component";
+import { PetDetailComponent } from "./pet-detail/pet-detail.component";
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
       {
         path: 'list',
         component: PetListComponent
+      },
+      {
+        path: 'details/:id',
+        component: PetDetailComponent
       },
       {
         path: '**',

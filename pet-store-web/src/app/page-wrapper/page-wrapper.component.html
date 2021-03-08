@@ -18,7 +18,7 @@
           <span class="user-name">
             <strong>{{jwtDecode().sub}}</strong>
           </span>
-          <span class="user-role">{{jwtDecode().authorities}}</span>
+          <span class="user-role">{{userAuthorities()}}</span>
           <span class="user-status">
             <i class="fa fa-circle"></i>
             <span>Online</span>

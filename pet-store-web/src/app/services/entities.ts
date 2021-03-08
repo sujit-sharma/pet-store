@@ -14,8 +14,8 @@ export interface PetEntity {
   id?: number,
   name: string,
   category: CategoryEntity,
-  photoUrls: Set<string>,
-  tags: Set<TagEntity>,
+  photoUrls: string[],
+  tags: TagEntity[],
   status: string
 }
 export interface TagEntity {

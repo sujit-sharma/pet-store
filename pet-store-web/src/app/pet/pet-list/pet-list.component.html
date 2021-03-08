@@ -1,1 +1,12 @@
-<p>pet-list works!</p>
+<hr>
+<div>
+  <h2>View All Pets</h2>
+  <ul><li *ngFor="let pet of pets " >
+    <h6> {{pet.id }} {{pet.category.name}} {{pet.name }}
+      <button (click)="petDetails(pet.id)"> Details </button>
+
+    </h6>
+
+  </li>
+  </ul>
+</div>

@@ -5,6 +5,7 @@ import {environment} from "../../environments/environment";
 import {PetEntity} from "./entities";
 import {Observable, of} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
+import {buildMonths} from "@ng-bootstrap/ng-bootstrap/datepicker/datepicker-tools";
 
 
 @Injectable({
@@ -29,21 +30,23 @@ export class PetService {
         catchError(this.handleError<PetEntity[]>('listPet',[]))
       );
   }
-
-  // listPets() {
-  //   this.http.get<PetEntity>(`${environment.baseURL}/api/pet`,this.httpOptions).subscribe(
-  //     response => {
-  //       this.pets = response;
-  //       console.log(response);}
-  //   );
-  //   return this.pets;
-  // }
-
+  createPet(petEntity: PetEntity) {
+    console.log('PetService: creating pet');
+    return this.http.post<PetEntity>(`${environment.baseURL}/api/pet`, petEntity, this.httpOptions);
+  }
   private handleError<T>(operation: string, result?: any[]) {
     return (error: any): Observable<T> => {
       console.error(error);
       console.log(`${operation} failed: ${error.message}`);
       return of(result as unknown as T );
     }
+  }
+
+  findPetById(petId: number): Observable<PetEntity> {
+    return this.http.get<PetEntity>(`${environment.baseURL}/api/pet/`+petId , this.httpOptions)
+      .pipe(
+        tap( _ => console.log('PetService: fetches petDetails')),
+        catchError(this.handleError<PetEntity>('pet details', ))
+      );
   }
 }

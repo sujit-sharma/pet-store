@@ -5,6 +5,7 @@ import { PetCreateComponent } from './pet-create/pet-create.component';
 import { PetListComponent } from './pet-list/pet-list.component';
 import { PetDetailComponent } from './pet-detail/pet-detail.component';
 import {PetRoutingModule} from "./pet-routing.module";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -12,7 +13,9 @@ import {PetRoutingModule} from "./pet-routing.module";
   declarations: [PetMainComponent, PetCreateComponent, PetListComponent, PetDetailComponent],
   imports: [
     CommonModule,
-    PetRoutingModule
+    PetRoutingModule,
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class PetModule { }

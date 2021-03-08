@@ -1,1 +1,26 @@
-<p>pet-detail works!</p>
+<hr>
+<div>
+  <h2>Details</h2>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Category</th>
+      <th>Name</th>
+      <th>Tags</th>
+      <th>Status</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>{{pet.id}}</td>
+      <td>{{pet.category.id }} : {{pet.category.name}}</td>
+      <td> {{pet.name}}</td>
+      <td *ngFor="let tag of pet.tags"> {{tag.id }}: {{tag.name}}</td>
+      <td>{{pet.status}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+

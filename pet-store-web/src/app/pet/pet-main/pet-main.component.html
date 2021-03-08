@@ -1,6 +1,8 @@
 <h2>Pets</h2>
 <hr>
-
+<div>
+  <button (click)="goBack()" > Go Back</button>
+</div>
 <div>
   <br>
   <a routerLink="/pages/pet/create">
@@ -10,6 +12,5 @@
   <a routerLink="/pages/pet/list">
     <span> List Pets </span>
   </a>
-
 </div>
 <router-outlet></router-outlet>

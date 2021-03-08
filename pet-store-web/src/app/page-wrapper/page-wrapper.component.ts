@@ -18,8 +18,17 @@ export class PageWrapperComponent implements OnInit {
 
   public jwtDecode(): any {
     const jwtHelper = new JwtHelperService();
-    const token = localStorage.getItem('authToken')
+    const token = localStorage.getItem('authToken');
     return jwtHelper.decodeToken(token);
+  }
+  public userAuthorities(): any {
+    const parsedToken = this.jwtDecode();
+    const jsonAuthorities = JSON.stringify(parsedToken.authorities );
+    let auth  = 'Authorities: ';
+    auth += jsonAuthorities.substr(15, 10);
+    auth += ', ';
+    auth += jsonAuthorities.substr(42,8);
+    return auth;
   }
 
   logoutUser() {
