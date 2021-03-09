@@ -1,5 +1,6 @@
 package com.sujit.petservice.service;
 
+import com.sujit.petservice.cloudstream.UserActivitySource;
 import com.sujit.petservice.model.*;
 import com.sujit.petservice.repository.CategoryRepository;
 import com.sujit.petservice.repository.PetEntityRepository;
@@ -8,14 +9,18 @@ import com.sujit.petservice.validator.CategoryValidator;
 import com.sujit.petservice.validator.PetValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@EnableBinding(UserActivitySource.class)
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,6 +30,8 @@ public class PetService {
     private final CategoryValidator categoryValidator;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+
+    private final UserActivitySource userActivitySource;
 
     public PetEntity create(PetEntity entity) {
         Set<AppError> errors = petValidator.validate(entity);
@@ -37,8 +44,16 @@ public class PetService {
         Set<TagEntity> tagEntities = entity.getTags().stream().map(this::updateIfRequired).collect(Collectors.toSet());
         entity.setTags(new HashSet<>(tagRepository.saveAll(tagEntities)));
         log.info("Pet created successfully");
+        //calling function to publish user created event
+        UserActivity userActivity = new UserActivity("new Pet Created", LocalDate.now(),entity.getName());
+        publishUserCreateEvent(userActivity);
         return repository.save(entity);
 
+    }
+
+    private void publishUserCreateEvent(UserActivity userActivity) {
+        userActivitySource.userActivity().send(MessageBuilder.withPayload(userActivity).build());
+        log.info("User Activity Published to queue");
     }
 
     private CategoryEntity updateIfRequired(CategoryEntity request) {

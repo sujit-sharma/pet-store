@@ -4,7 +4,9 @@ import com.sujit.userservice.LoginDto;
 import com.sujit.userservice.LoginResponse;
 import com.sujit.userservice.model.AppError;
 import com.sujit.userservice.model.Authorities;
+import com.sujit.userservice.model.UserActivity;
 import com.sujit.userservice.model.UserEntity;
+import com.sujit.userservice.repository.UserActivityRepository;
 import com.sujit.userservice.repository.UserRepository;
 import com.sujit.userservice.security.TokenProvider;
 import com.sujit.userservice.validator.UserValidator;
@@ -35,6 +37,13 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final UserValidator validator;
+    private final UserActivityRepository userActivityRepository;
+
+    @GetMapping("/user/activity")
+    public ResponseEntity<List<UserActivity>> userActivity() {
+        log.info("retrieving User Activity");
+        return ResponseEntity.ok(userActivityRepository.findAll());
+    }
 
     @PostMapping("/user")
     public ResponseEntity<Object> createUser(@RequestBody UserEntity user) {
